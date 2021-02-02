@@ -8,7 +8,7 @@ var server = http.createServer(function (req, res) {
         res.write('<html><body><p>This is the Home Page.</p></body></html>');
         res.end();
     } else if (req.url == '/book') {
-        axios.get('https://www.googleapis.com/books/v1/volumes?q=harry+potter&key=AIzaSyAcVp_fNF47C9rWMZbQLpA07Co9THnImuQ').then((response) => {
+        axios.get('https://www.googleapis.com/books/v1/volumes?q=harry+potter').then((response) => {
             var book = response.data.items[0].volumeInfo;
             console.log(book);
             console.log(book.title);
@@ -33,5 +33,3 @@ var server = http.createServer(function (req, res) {
 server.listen(5000);
 
 console.log('Node.Js web server at port 5000 is running...');
-
-// https://www.googleapis.com/books/v1/volumes?q=harry+potter&callback=handleResponse
