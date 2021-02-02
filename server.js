@@ -1,5 +1,9 @@
 var http = require('http');
 const axios = require('axios');
+const fs = require('fs');
+let rawApiKeys = fs.readFileSync('apikeys.json');
+let apiKeys = JSON.parse(rawApiKeys);
+let googleBooksApiKey = apiKeys.googlebooks;
 
 var server = http.createServer(function (req, res) {
     if (req.url == '/') {
@@ -8,7 +12,7 @@ var server = http.createServer(function (req, res) {
         res.write('<html><body><p>This is the Home Page.</p></body></html>');
         res.end();
     } else if (req.url == '/book') {
-        axios.get('https://www.googleapis.com/books/v1/volumes?q=harry+potter').then((response) => {
+        axios.get('https://www.googleapis.com/books/v1/volumes?q=harry+potter&key=' + googleBooksApiKey).then((response) => {
             var book = response.data.items[0].volumeInfo;
             console.log(book);
             console.log(book.title);
@@ -18,13 +22,9 @@ var server = http.createServer(function (req, res) {
             res.write('<html><body><p>' + book.title + '</p></body></html>');
             res.write('<html><body><p>' + book.description + '</p></body></html>');
             res.end();
-
-            // console.log(response.data.items[0]);
-            // res.writeHead(200, {'Content-Type': 'application/json'});
-
-            // res.write(response.data.items[0]);
-            // res.end();
-        })
+        }).catch((e) => {
+            console.log(e);
+        });
     } else {
         res.end('Invalid Request!');
     }
