@@ -27,10 +27,11 @@ var server = http.createServer(function (req, res) {
                 // res.write('<html><body><p>' + book.title + '</p></body></html>');
                 // res.write('<html><body><p>' + book.description + '</p></body></html>');
                 // res.end();
-                resolve(book);
             }).catch((e) => {
                 console.log(e);
             });
+            
+            resolve(book);
         })
     } else {
         res.end('Invalid Request!');
