@@ -1,37 +1,47 @@
 var http = require('http');
 const axios = require('axios');
+const cors = require('cors');
 const fs = require('fs');
 const { resolve } = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+
 let rawApiKeys = fs.readFileSync('apikeys.json');
 let apiKeys = JSON.parse(rawApiKeys);
 let googleBooksApiKey = apiKeys.googlebooks;
 
-var server = http.createServer(async function (req, res) {
-    if (req.url == '/') {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
+app.get('/', (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
 
-        res.write('<html><body><p>This is the Home Page.</p></body></html>');
-        res.end();
-    } else if (req.url == '/book') {
-        var query = requestBook('Harry Potter', 'J K Rowling');
-        await getBook('https://www.googleapis.com/books/v1/volumes?' + query + '&key=' + googleBooksApiKey).then((book) => {
-            console.log(book);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.write(JSON.stringify(book));
-            res.end();
-        });
-    } else {
-        res.end('Invalid Request!');
-    }
+    res.write('<html><body><p>This is the Home Page.</p></body></html>');
+    res.end();
 });
-server.listen(5000);
-console.log('Node.Js web server at port 5000 is running...');
+
+app.post('/book', async (req, res) => {
+    var body = req.body;
+    console.log(body);
+    var query = requestBook(body.title, body.author);
+    await getBook('https://www.googleapis.com/books/v1/volumes?' + query + '&key=' + googleBooksApiKey).then((book) => {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify(book));
+    });
+    res.end()
+});
+
+app.use((req, res, next) => {
+    res.status(404).send("Sorry, that route doesn't exist");
+});
+
+app.listen(5000, () => {
+    console.log('Listening on port 5000');
+});
 
 function requestBook(title, author) {
     var urlTitle = 'intitle:' + title.replace(/ /g, '+');
     var urlAuthor = 'inauthor:' + author.replace(/ /g, '+');
-    console.log(urlTitle);
-    console.log(urlAuthor);
 
     var queryString = 'q=' + urlTitle + '+' + urlAuthor;
     return queryString;
@@ -39,7 +49,6 @@ function requestBook(title, author) {
 
 async function getBook(url) {
     return new Promise(function(resolve, reject) {
-        var book = {};
 
         axios.get(url).then((response) => {
             var book = response.data.items[0].volumeInfo;
