@@ -6,33 +6,20 @@ let rawApiKeys = fs.readFileSync('apikeys.json');
 let apiKeys = JSON.parse(rawApiKeys);
 let googleBooksApiKey = apiKeys.googlebooks;
 
-var server = http.createServer(function (req, res) {
+var server = http.createServer(async function (req, res) {
     if (req.url == '/') {
         res.writeHead(200, { 'Content-Type': 'text/html' });
 
         res.write('<html><body><p>This is the Home Page.</p></body></html>');
         res.end();
     } else if (req.url == '/book') {
-        return new Promise(function(resolve, reject) {
-            var query = requestBook('Harry Potter', 'J K Rowling');
-            var book = {};
-
-            axios.get('https://www.googleapis.com/books/v1/volumes?' + query + '&key=' + googleBooksApiKey).then((response) => {
-                var book = response.data.items[0].volumeInfo;
-                console.log(book);
-                console.log(book.title);
-                console.log(book.description);
-                // res.writeHead(200, { 'Content-Type': 'text/html' });
-
-                // res.write('<html><body><p>' + book.title + '</p></body></html>');
-                // res.write('<html><body><p>' + book.description + '</p></body></html>');
-                // res.end();
-            }).catch((e) => {
-                console.log(e);
-            });
-            
-            resolve(book);
-        })
+        var query = requestBook('Harry Potter', 'J K Rowling');
+        await getBook('https://www.googleapis.com/books/v1/volumes?' + query + '&key=' + googleBooksApiKey).then((book) => {
+            console.log(book);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.write(JSON.stringify(book));
+            res.end();
+        });
     } else {
         res.end('Invalid Request!');
     }
@@ -48,4 +35,18 @@ function requestBook(title, author) {
 
     var queryString = 'q=' + urlTitle + '+' + urlAuthor;
     return queryString;
+}
+
+async function getBook(url) {
+    return new Promise(function(resolve, reject) {
+        var book = {};
+
+        axios.get(url).then((response) => {
+            var book = response.data.items[0].volumeInfo;
+            resolve(book);
+        }).catch((e) => {
+            console.log(e);
+            reject(e);
+        });
+    })
 }
