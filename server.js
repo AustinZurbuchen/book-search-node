@@ -22,16 +22,15 @@ var server = http.createServer(function (req, res) {
                 console.log(book);
                 console.log(book.title);
                 console.log(book.description);
-                res.writeHead(200, { 'Content-Type': 'text/html' });
+                // res.writeHead(200, { 'Content-Type': 'text/html' });
 
-                res.write('<html><body><p>' + book.title + '</p></body></html>');
-                res.write('<html><body><p>' + book.description + '</p></body></html>');
-                res.end();
+                // res.write('<html><body><p>' + book.title + '</p></body></html>');
+                // res.write('<html><body><p>' + book.description + '</p></body></html>');
+                // res.end();
+                resolve(book);
             }).catch((e) => {
                 console.log(e);
             });
-
-            resolve(book);
         })
     } else {
         res.end('Invalid Request!');
