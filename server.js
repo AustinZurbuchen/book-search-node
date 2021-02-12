@@ -15,8 +15,9 @@ let googleBooksApiKey = apiKeys.googlebooks;
 
 app.get('/', (req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html' });
+    console.log("Someone connected!!");
 
-    res.write('<html><body><p>This is the Home Page.</p></body></html>');
+    res.write('<html><body><p>Jake is Gay!!!!.</p></body></html>');
     res.end();
 });
 
