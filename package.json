@@ -1,0 +1,28 @@
+{
+  "name": "book-search-node",
+  "version": "1.0.0",
+  "description": "This it the node server for my book search app!",
+  "main": "server.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AustinZurbuchen/book-search-node.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AustinZurbuchen/book-search-node/issues"
+  },
+  "homepage": "https://github.com/AustinZurbuchen/book-search-node#readme"
+}
